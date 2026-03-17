@@ -1,0 +1,50 @@
+{
+  "name": "@aigroup/fmp-mcp",
+  "version": "2.0.0",
+  "mcpName": "io.github.aigroup/fmp-mcp",
+  "description": "Financial Modeling Prep MCP Server with latest MCP SDK features - tools, resources, and prompts",
+  "type": "module",
+  "bin": {
+    "aigroup-fmp-mcp": "./build/index.js",
+    "fmp-mcp": "./build/index.js"
+  },
+  "files": [
+    "build/**/*",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./build/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node build/index.js",
+    "start:http": "node build/index.js --http"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "financial-modeling-prep",
+    "fmp",
+    "stock-market",
+    "financial-data",
+    "ai-tools",
+    "claude",
+    "resources",
+    "prompts"
+  ],
+  "author": "AI Group",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.7",
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
