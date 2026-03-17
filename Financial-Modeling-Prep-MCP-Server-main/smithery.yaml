@@ -1,7 +1,0 @@
-version: 1
-runtime: "container"
-startCommand:
-  type: http
-build:
-  dockerfile: "Dockerfile"
-  dockerBuildPath: "."
