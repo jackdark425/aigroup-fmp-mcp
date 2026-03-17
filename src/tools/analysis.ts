@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { AnalystEstimate, PriceTarget, AnalystRating, InsiderTrading, InstitutionalHolder } from '../types/index.js';
 
@@ -34,7 +35,7 @@ const InstitutionalHoldersSchema = z.object({
 /**
  * Register analyst data tools
  */
-export function registerAnalysisTools(server: any) {
+export function registerAnalysisTools(server: McpServer) {
   // Analyst Estimates
   server.registerTool(
     'get_analyst_estimates',

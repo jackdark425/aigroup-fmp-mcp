@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { StockQuote, MarketMover, SectorPerformance } from '../types/index.js';
 
@@ -22,7 +23,7 @@ const SectorPerformanceSchema = z.object({
 /**
  * Register market data tools
  */
-export function registerMarketTools(server: any) {
+export function registerMarketTools(server: McpServer) {
   // Get Quote
   server.registerTool(
     'get_quote',

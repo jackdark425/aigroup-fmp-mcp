@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { IncomeStatement, BalanceSheet, CashFlow, CompanyProfile } from '../types/index.js';
 
@@ -29,7 +30,7 @@ const StockNewsSchema = z.object({
 /**
  * Register financial statement tools
  */
-export function registerFinancialsTools(server: any) {
+export function registerFinancialsTools(server: McpServer) {
   // Company Profile
   server.registerTool(
     'get_company_profile',

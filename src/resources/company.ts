@@ -21,7 +21,11 @@ function registerCompanyProfileResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const symbol = uri.pathname.split('/')[2];
+      const parts = uri.pathname.split('/');
+      const symbol = parts[2];
+      if (!symbol) {
+        throw new Error('Invalid URI: symbol is required');
+      }
       const data = await fetchFMP<CompanyProfile[]>(`/profile?symbol=${symbol.toUpperCase()}`);
       return {
         contents: [{
@@ -47,7 +51,11 @@ function registerCompanyQuoteResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const symbol = uri.pathname.split('/')[2];
+      const parts = uri.pathname.split('/');
+      const symbol = parts[2];
+      if (!symbol) {
+        throw new Error('Invalid URI: symbol is required');
+      }
       const data = await fetchFMP<StockQuote[]>(`/quote?symbol=${symbol.toUpperCase()}`);
       return {
         contents: [{
@@ -77,6 +85,16 @@ function registerCompanyFinancialsResource(server: McpServer) {
       const symbol = parts[2];
       const statement = parts[4] as 'income' | 'balance' | 'cashflow';
       const period = parts[5] as 'annual' | 'quarter';
+      
+      if (!symbol) {
+        throw new Error('Invalid URI: symbol is required');
+      }
+      if (!statement || !['income', 'balance', 'cashflow'].includes(statement)) {
+        throw new Error('Invalid URI: statement must be income, balance, or cashflow');
+      }
+      if (!period || !['annual', 'quarter'].includes(period)) {
+        throw new Error('Invalid URI: period must be annual or quarter');
+      }
       
       const endpointMap = {
         income: '/income-statement',
@@ -156,7 +174,16 @@ function registerSectorPerformanceResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const date = uri.pathname.split('/')[3];
+      const parts = uri.pathname.split('/');
+      const date = parts[3];
+      if (!date) {
+        throw new Error('Invalid URI: date is required (format: YYYY-MM-DD)');
+      }
+      // Validate date format (YYYY-MM-DD)
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(date)) {
+        throw new Error('Invalid URI: date must be in YYYY-MM-DD format');
+      }
       const data = await fetchFMP(`/sector-performance-snapshot?date=${date}`);
       return {
         contents: [{

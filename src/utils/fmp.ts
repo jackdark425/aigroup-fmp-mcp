@@ -2,19 +2,25 @@
  * FMP API utility functions
  */
 
-const FMP_API_KEY = process.env.FMP_API_KEY;
 const FMP_BASE_URL = 'https://financialmodelingprep.com/stable';
 
-if (!FMP_API_KEY) {
-  console.error('Error: FMP_API_KEY environment variable is required');
-  process.exit(1);
+/**
+ * Get FMP API key from environment
+ */
+function getApiKey(): string {
+  const apiKey = process.env.FMP_API_KEY;
+  if (!apiKey) {
+    throw new Error('FMP_API_KEY environment variable is required');
+  }
+  return apiKey;
 }
 
 /**
  * Make a request to FMP API
  */
 export async function fetchFMP<T = unknown>(endpoint: string): Promise<T> {
-  const url = `${FMP_BASE_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}apikey=${FMP_API_KEY}`;
+  const apiKey = getApiKey();
+  const url = `${FMP_BASE_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}apikey=${apiKey}`;
   
   const response = await fetch(url);
   

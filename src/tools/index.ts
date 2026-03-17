@@ -2,6 +2,7 @@
  * Tools registration entry point
  */
 
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerMarketTools } from './market.js';
 import { registerFinancialsTools } from './financials.js';
 import { registerAnalysisTools } from './analysis.js';
@@ -11,7 +12,7 @@ import { registerCalendarTools } from './calendar.js';
 /**
  * Register all tools with the MCP server
  */
-export function registerAllTools(server: any): void {
+export function registerAllTools(server: McpServer): void {
   registerMarketTools(server);
   registerFinancialsTools(server);
   registerAnalysisTools(server);

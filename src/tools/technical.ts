@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { TechnicalIndicator, HistoricalPrice } from '../types/index.js';
 
@@ -26,7 +27,7 @@ const HistoricalChartSchema = z.object({
 /**
  * Register technical indicator tools
  */
-export function registerTechnicalTools(server: any) {
+export function registerTechnicalTools(server: McpServer) {
   // RSI
   server.registerTool(
     'get_technical_indicator_rsi',

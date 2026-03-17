@@ -3,6 +3,7 @@
  */
 
 import { z } from 'zod';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { EarningsCalendar, EconomicCalendar } from '../types/index.js';
 
@@ -21,7 +22,7 @@ const EconomicIndicatorSchema = z.object({
 /**
  * Register calendar data tools
  */
-export function registerCalendarTools(server: any) {
+export function registerCalendarTools(server: McpServer) {
   // Earnings Calendar
   server.registerTool(
     'get_earnings_calendar',
