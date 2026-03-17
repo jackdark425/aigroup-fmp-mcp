@@ -16,7 +16,7 @@ import { Readable } from 'stream';
  * Server metadata
  */
 const SERVER_NAME = 'aigroup-fmp-mcp';
-const SERVER_VERSION = '2.0.0';
+const SERVER_VERSION = '2.0.2';
 
 /**
  * Create and configure the MCP server

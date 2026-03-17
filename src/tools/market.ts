@@ -7,17 +7,29 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { StockQuote, MarketMover, SectorPerformance } from '../types/index.js';
 
+// Common output format schema
+const OutputFormatSchema = z.object({
+  outputFormat: z.enum(['text', 'file']).optional()
+    .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)'),
+});
+
 // Schemas
 const QuoteSchema = z.object({
   symbol: z.string().describe('Stock ticker symbol (e.g., AAPL)'),
+  outputFormat: z.enum(['text', 'file']).optional()
+    .describe('Output format: "text" returns JSON directly, "file" saves to file'),
 });
 
 const SearchSchema = z.object({
   query: z.string().describe('Search query (company name or ticker)'),
+  outputFormat: z.enum(['text', 'file']).optional()
+    .describe('Output format: "text" returns JSON directly, "file" saves to file'),
 });
 
 const SectorPerformanceSchema = z.object({
   date: z.string().optional().describe('Date in YYYY-MM-DD format (optional, defaults to latest)'),
+  outputFormat: z.enum(['text', 'file']).optional()
+    .describe('Output format: "text" returns JSON directly, "file" saves to file'),
 });
 
 /**
@@ -34,7 +46,10 @@ export function registerMarketTools(server: McpServer) {
     async (args: z.infer<typeof QuoteSchema>) => {
       try {
         const data = await fetchFMP<StockQuote[]>(`/quote?symbol=${args.symbol.toUpperCase()}`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'quote' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -51,7 +66,10 @@ export function registerMarketTools(server: McpServer) {
     async (args: z.infer<typeof SearchSchema>) => {
       try {
         const data = await fetchFMP(`/search-symbol?query=${encodeURIComponent(args.query)}&limit=10`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'search' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -63,12 +81,18 @@ export function registerMarketTools(server: McpServer) {
     'get_market_gainers',
     {
       description: 'Get stocks with the largest price increases (top gainers)',
-      inputSchema: z.object({}),
+      inputSchema: z.object({
+        outputFormat: z.enum(['text', 'file']).optional()
+          .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended)'),
+      }),
     },
-    async () => {
+    async (args: { outputFormat?: 'text' | 'file' }) => {
       try {
         const data = await fetchFMP<MarketMover[]>('/biggest-gainers');
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'gainers' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -80,12 +104,18 @@ export function registerMarketTools(server: McpServer) {
     'get_market_losers',
     {
       description: 'Get stocks with the largest price drops (top losers)',
-      inputSchema: z.object({}),
+      inputSchema: z.object({
+        outputFormat: z.enum(['text', 'file']).optional()
+          .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended)'),
+      }),
     },
-    async () => {
+    async (args: { outputFormat?: 'text' | 'file' }) => {
       try {
         const data = await fetchFMP<MarketMover[]>('/biggest-losers');
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'losers' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -97,12 +127,18 @@ export function registerMarketTools(server: McpServer) {
     'get_most_active',
     {
       description: 'Get most actively traded stocks by volume',
-      inputSchema: z.object({}),
+      inputSchema: z.object({
+        outputFormat: z.enum(['text', 'file']).optional()
+          .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended)'),
+      }),
     },
-    async () => {
+    async (args: { outputFormat?: 'text' | 'file' }) => {
       try {
         const data = await fetchFMP<MarketMover[]>('/most-actives');
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'most-active' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -120,7 +156,10 @@ export function registerMarketTools(server: McpServer) {
       try {
         const date = args.date || new Date().toISOString().split('T')[0];
         const data = await fetchFMP<SectorPerformance[]>(`/sector-performance-snapshot?date=${date}`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'sector-performance' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -132,12 +171,18 @@ export function registerMarketTools(server: McpServer) {
     'get_sp500_constituents',
     {
       description: 'Get list of S&P 500 index constituents',
-      inputSchema: z.object({}),
+      inputSchema: z.object({
+        outputFormat: z.enum(['text', 'file']).optional()
+          .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended)'),
+      }),
     },
-    async () => {
+    async (args: { outputFormat?: 'text' | 'file' }) => {
       try {
         const data = await fetchFMP('/sp500-constituent');
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'sp500-constituents' 
+        });
       } catch (error) {
         return errorResponse(error);
       }

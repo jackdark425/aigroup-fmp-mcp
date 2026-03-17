@@ -2,7 +2,30 @@
  * FMP API utility functions
  */
 
+import fs from 'fs';
+import path from 'path';
+import os from 'os';
+
 const FMP_BASE_URL = 'https://financialmodelingprep.com/stable';
+
+/**
+ * Default output directory for JSON files
+ */
+const DEFAULT_OUTPUT_DIR = process.env.FMP_OUTPUT_DIR || path.join(os.tmpdir(), 'fmp-mcp-output');
+
+// Ensure output directory exists
+if (!fs.existsSync(DEFAULT_OUTPUT_DIR)) {
+  fs.mkdirSync(DEFAULT_OUTPUT_DIR, { recursive: true });
+}
+
+/**
+ * Generate a unique filename for output
+ */
+function generateOutputFilename(prefix: string): string {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const random = Math.random().toString(36).substring(2, 8);
+  return `${prefix}_${timestamp}_${random}.json`;
+}
 
 /**
  * Get FMP API key from environment
@@ -33,10 +56,52 @@ export async function fetchFMP<T = unknown>(endpoint: string): Promise<T> {
 
 /**
  * Format response as MCP tool result
+ * Supports both text and file output modes
  */
-export function jsonResponse(data: unknown) {
+export function jsonResponse(
+  data: unknown,
+  options: { outputFormat?: 'text' | 'file'; filenamePrefix?: string; maxTextLength?: number } = {}
+) {
+  const { outputFormat = 'text', filenamePrefix = 'fmp', maxTextLength = 5000 } = options;
+  
+  const jsonString = JSON.stringify(data, null, 2);
+  
+  // Auto-switch to file if data is too large
+  const shouldUseFile = outputFormat === 'file' || jsonString.length > maxTextLength;
+  
+  if (shouldUseFile) {
+    // Save to file
+    const filename = generateOutputFilename(filenamePrefix);
+    const filepath = path.join(DEFAULT_OUTPUT_DIR, filename);
+    fs.writeFileSync(filepath, jsonString, 'utf-8');
+    
+    // Get file stats
+    const stats = fs.statSync(filepath);
+    const sizeKB = (stats.size / 1024).toFixed(2);
+    
+    // Return file reference
+    const isArray = Array.isArray(data);
+    const itemCount = isArray ? data.length : 1;
+    
+    return {
+      content: [
+        {
+          type: 'text' as const,
+          text: JSON.stringify({
+            _outputMode: 'file',
+            _message: `Data saved to file due to large size (${jsonString.length} chars, ${sizeKB} KB)`,
+            filePath: filepath,
+            itemCount,
+            fileSize: `${sizeKB} KB`,
+          }, null, 2),
+        },
+      ],
+    };
+  }
+  
+  // Return as text (original behavior)
   return {
-    content: [{ type: 'text' as const, text: JSON.stringify(data, null, 2) }],
+    content: [{ type: 'text' as const, text: jsonString }],
   };
 }
 

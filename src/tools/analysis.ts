@@ -11,25 +11,31 @@ import type { AnalystEstimate, PriceTarget, AnalystRating, InsiderTrading, Insti
 const SymbolSchema = z.string();
 const PeriodSchema = z.enum(['annual', 'quarter']).optional();
 const LimitSchema = z.number().optional();
+const OutputFormatSchema = z.enum(['text', 'file']).optional()
+  .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)');
 
 const AnalystEstimatesSchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
   period: PeriodSchema.describe('Period type (annual or quarter)'),
   limit: LimitSchema.describe('Number of periods to return (default: 10)'),
+  outputFormat: OutputFormatSchema,
 });
 
 const SymbolOnlySchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
+  outputFormat: OutputFormatSchema,
 });
 
 const InsiderTradingSchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
   limit: LimitSchema.describe('Number of transactions to return (default: 100)'),
+  outputFormat: OutputFormatSchema,
 });
 
 const InstitutionalHoldersSchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
   limit: LimitSchema.describe('Number of holders to return (default: 100)'),
+  outputFormat: OutputFormatSchema,
 });
 
 /**
@@ -50,7 +56,10 @@ export function registerAnalysisTools(server: McpServer) {
         const data = await fetchFMP<AnalystEstimate[]>(
           `/analyst-estimates?symbol=${args.symbol.toUpperCase()}&period=${period}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'analyst-estimates' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -67,7 +76,10 @@ export function registerAnalysisTools(server: McpServer) {
     async (args: z.infer<typeof SymbolOnlySchema>) => {
       try {
         const data = await fetchFMP<PriceTarget[]>(`/price-target-summary?symbol=${args.symbol.toUpperCase()}`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'price-target' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -84,7 +96,10 @@ export function registerAnalysisTools(server: McpServer) {
     async (args: z.infer<typeof SymbolOnlySchema>) => {
       try {
         const data = await fetchFMP<AnalystRating[]>(`/grades?symbol=${args.symbol.toUpperCase()}`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'analyst-ratings' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -104,7 +119,10 @@ export function registerAnalysisTools(server: McpServer) {
         const data = await fetchFMP<InsiderTrading[]>(
           `/insider-trading/search?symbol=${args.symbol.toUpperCase()}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'insider-trading' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -124,7 +142,10 @@ export function registerAnalysisTools(server: McpServer) {
         const data = await fetchFMP<InstitutionalHolder[]>(
           `/institutional-ownership/latest?symbol=${args.symbol.toUpperCase()}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'institutional-holders' 
+        });
       } catch (error) {
         return errorResponse(error);
       }

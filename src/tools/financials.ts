@@ -11,20 +11,25 @@ import type { IncomeStatement, BalanceSheet, CashFlow, CompanyProfile } from '..
 const PeriodSchema = z.enum(['annual', 'quarter']).optional();
 const LimitSchema = z.number().optional();
 const SymbolSchema = z.string();
+const OutputFormatSchema = z.enum(['text', 'file']).optional()
+  .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)');
 
 const FinancialStatementSchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
   period: PeriodSchema.describe('Period type (annual or quarter)'),
   limit: LimitSchema.describe('Number of periods to return (default: 5)'),
+  outputFormat: OutputFormatSchema,
 });
 
 const CompanyProfileSchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
+  outputFormat: OutputFormatSchema,
 });
 
 const StockNewsSchema = z.object({
   symbol: SymbolSchema.describe('Stock ticker symbol'),
   limit: z.number().optional().describe('Number of articles to return (default: 10)'),
+  outputFormat: OutputFormatSchema,
 });
 
 /**
@@ -41,7 +46,10 @@ export function registerFinancialsTools(server: McpServer) {
     async (args: z.infer<typeof CompanyProfileSchema>) => {
       try {
         const data = await fetchFMP<CompanyProfile[]>(`/profile?symbol=${args.symbol.toUpperCase()}`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'company-profile' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -62,7 +70,10 @@ export function registerFinancialsTools(server: McpServer) {
         const data = await fetchFMP<IncomeStatement[]>(
           `/income-statement?symbol=${args.symbol.toUpperCase()}&period=${period}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'income-statement' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -83,7 +94,10 @@ export function registerFinancialsTools(server: McpServer) {
         const data = await fetchFMP<BalanceSheet[]>(
           `/balance-sheet-statement?symbol=${args.symbol.toUpperCase()}&period=${period}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'balance-sheet' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -104,7 +118,10 @@ export function registerFinancialsTools(server: McpServer) {
         const data = await fetchFMP<CashFlow[]>(
           `/cash-flow-statement?symbol=${args.symbol.toUpperCase()}&period=${period}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'cash-flow' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -122,7 +139,10 @@ export function registerFinancialsTools(server: McpServer) {
       try {
         const limit = args.limit || 10;
         const data = await fetchFMP(`/news/stock?symbols=${args.symbol.toUpperCase()}&limit=${limit}`);
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'stock-news' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -143,7 +163,10 @@ export function registerFinancialsTools(server: McpServer) {
         const data = await fetchFMP(
           `/key-metrics?symbol=${args.symbol.toUpperCase()}&period=${period}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'key-metrics' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
@@ -164,7 +187,10 @@ export function registerFinancialsTools(server: McpServer) {
         const data = await fetchFMP(
           `/ratios?symbol=${args.symbol.toUpperCase()}&period=${period}&limit=${limit}`
         );
-        return jsonResponse(data);
+        return jsonResponse(data, { 
+          outputFormat: args.outputFormat, 
+          filenamePrefix: 'financial-ratios' 
+        });
       } catch (error) {
         return errorResponse(error);
       }
