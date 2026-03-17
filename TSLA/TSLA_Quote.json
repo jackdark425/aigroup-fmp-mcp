@@ -1,0 +1,21 @@
+[
+  {
+    "symbol": "TSLA",
+    "name": "Tesla, Inc.",
+    "price": 392.43,
+    "changePercentage": -2.70009,
+    "change": -10.89,
+    "volume": 62317429,
+    "dayLow": 385.4,
+    "dayHigh": 396.34,
+    "yearHigh": 498.83,
+    "yearLow": 214.25,
+    "marketCap": 1472566883481,
+    "priceAvg50": 434.408,
+    "priceAvg200": 391.00797,
+    "exchange": "NASDAQ",
+    "open": 395.09,
+    "previousClose": 403.32,
+    "timestamp": 1772571600
+  }
+]

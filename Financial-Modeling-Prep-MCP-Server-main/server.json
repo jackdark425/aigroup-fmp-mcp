@@ -1,0 +1,82 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.imbenrabi/financial-modeling-prep-mcp-server",
+  "title": "Financial Modeling Prep MCP Server",
+  "description": "MCP server for Financial Modeling Prep API with 250+ financial data tools",
+  "version": "2.6.8",
+  "websiteUrl": "https://github.com/imbenrabi/Financial-Modeling-Prep-MCP-Server",
+  "repository": {
+    "url": "https://github.com/imbenrabi/Financial-Modeling-Prep-MCP-Server",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "financial-modeling-prep-mcp-server",
+      "version": "2.6.8",
+      "runtimeHint": "npx",
+      "transport": {
+        "type": "streamable-http",
+        "url": "https://financial-modeling-prep-mcp-server-production.up.railway.app/mcp"
+      },
+      "packageArguments": [
+        {
+          "type": "named",
+          "name": "--fmp-token",
+          "description": "Financial Modeling Prep API access token",
+          "isRequired": false,
+          "format": "string"
+        },
+        {
+          "type": "named",
+          "name": "--port",
+          "description": "Port number for HTTP server mode",
+          "isRequired": false,
+          "format": "number"
+        },
+        {
+          "type": "named",
+          "name": "--dynamic-tool-discovery",
+          "description": "Enable dynamic tool discovery mode",
+          "isRequired": false,
+          "format": "boolean"
+        },
+        {
+          "type": "named",
+          "name": "--fmp-tool-sets",
+          "description": "Comma-separated list of tool sets to load",
+          "isRequired": false,
+          "format": "string"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "FMP_ACCESS_TOKEN",
+          "description": "Financial Modeling Prep API access token",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true
+        },
+        {
+          "name": "PORT",
+          "description": "Port number for HTTP server mode",
+          "isRequired": false,
+          "format": "number"
+        },
+        {
+          "name": "DYNAMIC_TOOL_DISCOVERY",
+          "description": "Enable dynamic tool discovery mode",
+          "isRequired": false,
+          "format": "boolean"
+        },
+        {
+          "name": "FMP_TOOL_SETS",
+          "description": "Comma-separated list of tool sets to load",
+          "isRequired": false,
+          "format": "string"
+        }
+      ]
+    }
+  ]
+}
