@@ -14,14 +14,14 @@ const OutputFormatSchema = z.enum(['text', 'file']).optional()
   .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)');
 
 const TechnicalIndicatorSchema = z.object({
-  symbol: z.string().describe('Stock ticker symbol'),
+  symbol: z.string().min(1, "Symbol cannot be empty").describe('Stock ticker symbol'),
   timeframe: TimeframeSchema.describe('Timeframe for technical analysis'),
   period: z.number().optional().describe('Period length'),
   outputFormat: OutputFormatSchema,
 });
 
 const HistoricalChartSchema = z.object({
-  symbol: z.string().describe('Stock ticker symbol'),
+  symbol: z.string().min(1, "Symbol cannot be empty").describe('Stock ticker symbol'),
   interval: IntervalSchema.describe('Time interval'),
   from: z.string().optional().describe('Start date in YYYY-MM-DD format (optional)'),
   to: z.string().optional().describe('End date in YYYY-MM-DD format (optional)'),

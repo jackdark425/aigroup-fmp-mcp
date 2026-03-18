@@ -10,7 +10,7 @@ import type { IncomeStatement, BalanceSheet, CashFlow, CompanyProfile } from '..
 // Common schemas
 const PeriodSchema = z.enum(['annual', 'quarter']).optional();
 const LimitSchema = z.number().optional();
-const SymbolSchema = z.string();
+const SymbolSchema = z.string().min(1, "Symbol cannot be empty");
 const OutputFormatSchema = z.enum(['text', 'file']).optional()
   .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)');
 

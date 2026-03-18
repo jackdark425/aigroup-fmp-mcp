@@ -8,7 +8,7 @@ import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { AnalystEstimate, PriceTarget, AnalystRating, InsiderTrading, InstitutionalHolder } from '../types/index.js';
 
 // Schemas
-const SymbolSchema = z.string();
+const SymbolSchema = z.string().min(1, "Symbol cannot be empty");
 const PeriodSchema = z.enum(['annual', 'quarter']).optional();
 const LimitSchema = z.number().optional();
 const OutputFormatSchema = z.enum(['text', 'file']).optional()

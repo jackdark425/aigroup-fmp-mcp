@@ -15,7 +15,7 @@ const OutputFormatSchema = z.object({
 
 // Schemas
 const QuoteSchema = z.object({
-  symbol: z.string().describe('Stock ticker symbol (e.g., AAPL)'),
+  symbol: z.string().min(1, "Symbol cannot be empty").describe('Stock ticker symbol (e.g., AAPL)'),
   outputFormat: z.enum(['text', 'file']).optional()
     .describe('Output format: "text" returns JSON directly, "file" saves to file'),
 });
@@ -65,7 +65,7 @@ export function registerMarketTools(server: McpServer) {
     },
     async (args: z.infer<typeof SearchSchema>) => {
       try {
-        const data = await fetchFMP(`/search-symbol?query=${encodeURIComponent(args.query)}&limit=10`);
+        const data = await fetchFMP(`/symbol-search?query=${encodeURIComponent(args.query)}&limit=10`);
         return jsonResponse(data, { 
           outputFormat: args.outputFormat, 
           filenamePrefix: 'search' 

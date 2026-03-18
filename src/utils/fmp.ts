@@ -43,7 +43,9 @@ function getApiKey(): string {
  */
 export async function fetchFMP<T = unknown>(endpoint: string): Promise<T> {
   const apiKey = getApiKey();
-  const url = `${FMP_BASE_URL}${endpoint}${endpoint.includes('?') ? '&' : '?'}apikey=${apiKey}`;
+  // Ensure endpoint doesn't end with '&' before adding apikey
+  const cleanEndpoint = endpoint.endsWith('&') ? endpoint.slice(0, -1) : endpoint;
+  const url = `${FMP_BASE_URL}${cleanEndpoint}${cleanEndpoint.includes('?') ? '&' : '?'}apikey=${apiKey}`;
   
   const response = await fetch(url);
   
@@ -113,6 +115,43 @@ export function errorResponse(error: unknown) {
     content: [{ type: 'text' as const, text: `Error: ${error instanceof Error ? error.message : String(error)}` }],
     isError: true,
   };
+}
+
+/**
+ * Handle invalid symbol error with consistent format
+ * Used when API returns empty data or invalid symbol is detected
+ */
+export function invalidSymbolError(symbol: string): { content: Array<{ type: 'text'; text: string }>; isError: boolean } {
+  return {
+    content: [{
+      type: 'text' as const,
+      text: `Error: Invalid or unknown symbol "${symbol}". Please verify the ticker symbol and try again.`
+    }],
+    isError: true,
+  };
+}
+
+/**
+ * Validate API response data and return appropriate error if invalid
+ * Returns null if data is valid, error response if invalid
+ */
+export function validateSymbolResponse<T>(data: T | T[] | null | undefined, symbol: string): { content: Array<{ type: 'text'; text: string }>; isError: boolean } | null {
+  // Check for null/undefined
+  if (data === null || data === undefined) {
+    return invalidSymbolError(symbol);
+  }
+  
+  // Check for empty array
+  if (Array.isArray(data) && data.length === 0) {
+    return invalidSymbolError(symbol);
+  }
+  
+  // Check for empty object
+  if (typeof data === 'object' && !Array.isArray(data) && Object.keys(data).length === 0) {
+    return invalidSymbolError(symbol);
+  }
+  
+  return null;
 }
 
 /**

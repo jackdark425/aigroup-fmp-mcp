@@ -18,7 +18,7 @@ const DateRangeSchema = z.object({
 });
 
 const EconomicIndicatorSchema = z.object({
-  name: z.string().describe('Indicator name (e.g., GDP, unemploymentRate, CPI)'),
+  name: z.string().min(1, "Indicator name cannot be empty").describe('Indicator name (e.g., GDP, unemploymentRate, CPI)'),
   from: z.string().optional().describe('Start date in YYYY-MM-DD format (optional)'),
   to: z.string().optional().describe('End date in YYYY-MM-DD format (optional)'),
   outputFormat: OutputFormatSchema,

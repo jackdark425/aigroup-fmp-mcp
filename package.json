@@ -1,6 +1,6 @@
 {
   "name": "aigroup-fmp-mcp",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "mcpName": "io.github.aigroup/fmp-mcp",
   "description": "Financial Modeling Prep MCP Server with latest MCP SDK features - tools, resources, and prompts",
   "type": "module",
