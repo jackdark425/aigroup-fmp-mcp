@@ -180,6 +180,10 @@ npm run dev
 - **Dual Transport**: Support for both stdio and HTTP transports
 - **Better TypeScript**: Full type definitions for all data structures
 
+## Acknowledgments
+
+This project was developed with reference to the MCP project work by **houtini-ai**. Thanks for the prior implementation ideas and project direction that informed this server.
+
 ## License & Usage
 
 This project is released under the **MIT License**.
