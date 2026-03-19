@@ -182,7 +182,12 @@ npm run dev
 
 ## Acknowledgments
 
-This project was developed with reference to the MCP project work by **houtini-ai**. Thanks for the prior implementation ideas and project direction that informed this server.
+This project was developed with reference to **houtini-ai/fmp-mcp**:
+
+- Repository: https://github.com/houtini-ai/fmp-mcp
+- Reference scope: overall project direction, MCP server structure, and feature organization
+
+Thanks to **houtini-ai** for the prior open-source work that helped inform this implementation.
 
 ## License & Usage
 
