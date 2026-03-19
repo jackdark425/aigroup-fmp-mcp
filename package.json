@@ -2,15 +2,30 @@
   "name": "aigroup-fmp-mcp",
   "version": "2.0.3",
   "mcpName": "io.github.aigroup/fmp-mcp",
-  "description": "Financial Modeling Prep MCP Server with latest MCP SDK features - tools, resources, and prompts",
+  "description": "Financial Modeling Prep MCP server with tools, resources, prompts, and HTTP transport support for market data workflows.",
   "type": "module",
+  "author": {
+    "name": "AI Group",
+    "email": "jackdark425@gmail.com",
+    "url": "https://github.com/jackdark425"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackdark425/aigroup-fmp-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jackdark425/aigroup-fmp-mcp/issues"
+  },
+  "homepage": "https://github.com/jackdark425/aigroup-fmp-mcp#readme",
   "bin": {
     "aigroup-fmp-mcp": "build/index.js",
     "fmp-mcp": "build/index.js"
   },
   "files": [
     "build/**/*",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"
@@ -29,13 +44,11 @@
     "fmp",
     "stock-market",
     "financial-data",
-    "ai-tools",
-    "claude",
+    "market-data",
     "resources",
-    "prompts"
+    "prompts",
+    "typescript"
   ],
-  "author": "AI Group",
-  "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",
     "zod": "^3.25.0"
