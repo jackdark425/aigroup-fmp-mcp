@@ -1,115 +1,77 @@
-# Financial Modeling Prep MCP Server v2.0
+# Financial Modeling Prep MCP Server
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![MCP SDK](https://img.shields.io/badge/MCP%20SDK-1.27.1-blue.svg)](https://github.com/modelcontextprotocol/typescript-sdk)
+[![Version](https://img.shields.io/badge/version-2.0.3-brightgreen.svg)](https://github.com/jackdark425/aigroup-fmp-mcp)
 
-A modern Model Context Protocol (MCP) server for accessing financial data from Financial Modeling Prep (FMP) API. Built with the latest MCP SDK features including tools, resources, and prompts.
+> MCP server for Financial Modeling Prep (FMP) market data, built with the modern MCP SDK tool/resource/prompt model.
 
-## Features
+## Overview
 
-### 🔧 Tools (25 Total)
+`aigroup-fmp-mcp` provides a structured MCP interface over the Financial Modeling Prep API for:
 
-**Market Data**
-- `get_quote` - Real-time stock quotes
-- `search_symbol` - Search stocks by name or ticker
-- `get_market_gainers` - Top performing stocks
-- `get_market_losers` - Worst performing stocks
-- `get_most_active` - Most actively traded stocks
-- `get_sector_performance` - Sector performance data
-- `get_sp500_constituents` - S&P 500 constituents
+- real-time quotes and symbol lookup
+- company profiles and financial statements
+- analyst estimates and ratings
+- technical indicators and historical charts
+- earnings / economic calendar workflows
+- reusable MCP resources and prompts for analysis tasks
 
-**Financial Statements**
-- `get_company_profile` - Detailed company information
-- `get_income_statement` - Income statements (annual/quarterly)
-- `get_balance_sheet` - Balance sheets (annual/quarterly)
-- `get_cash_flow` - Cash flow statements (annual/quarterly)
-- `get_stock_news` - Latest stock news
-- `get_key_metrics` - Key financial metrics (P/E, ROE, etc.)
-- `get_financial_ratios` - Detailed financial ratios
+## Highlights
 
-**Analyst Data**
-- `get_analyst_estimates` - Revenue and EPS forecasts
-- `get_price_target` - Analyst price targets
-- `get_analyst_ratings` - Upgrades/downgrades
-- `get_insider_trading` - Insider trading activity
-- `get_institutional_holders` - 13F institutional ownership
+- **25 MCP tools** covering market data, financials, analyst workflows, technical indicators, and calendar data
+- **Resources support** for direct URI-based access patterns
+- **Prompt templates** for stock analysis, portfolio review, and earnings preview
+- **Dual transport support** for stdio and HTTP usage
+- **Zod validation** for safer input handling
+- **Built on MCP SDK 1.27.1** with modern `McpServer` APIs
 
-**Technical Indicators**
-- `get_technical_indicator_rsi` - Relative Strength Index
-- `get_technical_indicator_sma` - Simple Moving Average
-- `get_technical_indicator_ema` - Exponential Moving Average
-- `get_historical_chart` - Historical price data
+## Quick Start
 
-**Calendar Data**
-- `get_earnings_calendar` - Earnings announcement calendar
-- `get_economic_calendar` - Economic data releases
-- `get_economic_indicator` - GDP, unemployment, CPI, etc.
+### Requirements
 
-### 📚 Resources (5 Total)
+- Node.js >= 18
+- npm
+- A valid FMP API key
 
-Resources provide direct data access via URIs:
-
-- `fmp://company/{symbol}/profile` - Company profile
-- `fmp://company/{symbol}/quote` - Real-time quote
-- `fmp://company/{symbol}/financials/{statement}/{period}` - Financial statements
-- `fmp://market/overview` - Market overview (gainers, losers, active)
-- `fmp://market/sectors/{date}` - Sector performance
-
-### 💬 Prompts (3 Total)
-
-Prompt templates for common analysis tasks:
-
-- `stock_analysis` - Comprehensive stock analysis
-- `portfolio_evaluation` - Portfolio diversification and risk analysis
-- `earnings_preview` - Upcoming earnings preview
-
-## Installation
+### Run with local source
 
 ```bash
+git clone https://github.com/jackdark425/aigroup-fmp-mcp.git
+cd aigroup-fmp-mcp
 npm install
 npm run build
+export FMP_API_KEY="your-api-key"
+npm start
 ```
+
+### HTTP mode
+
+```bash
+export FMP_API_KEY="your-api-key"
+npm run start:http
+```
+
+By default, the HTTP server exposes:
+
+- `POST /mcp` — MCP endpoint
+- `GET /health` — health check
+- `GET /` — server info
 
 ## Configuration
 
-Set your FMP API key as an environment variable:
+Set your API key before starting the server:
 
 ```bash
 export FMP_API_KEY="your-api-key"
 ```
 
-Get your API key from [Financial Modeling Prep](https://financialmodelingprep.com/)
+Get your key from [Financial Modeling Prep](https://financialmodelingprep.com/).
 
-## Usage
+## MCP Client Configuration
 
-### Stdio Mode (Default)
-
-```bash
-# Set environment variable and run
-export FMP_API_KEY="your-api-key"
-npm start
-
-# Or
-FMP_API_KEY="your-api-key" node build/index.js
-```
-
-### HTTP Mode
-
-```bash
-# Start HTTP server
-npm run start:http
-
-# Or with custom port
-node build/index.js --http --port=8080
-```
-
-The HTTP server provides:
-- `POST /mcp` - MCP protocol endpoint
-- `GET /health` - Health check
-- `GET /` - Server info
-
-### With Claude Desktop
-
-Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS or `%APPDATA%/Claude/claude_desktop_config.json` on Windows):
+### Claude Desktop / compatible MCP clients
 
 ```json
 {
@@ -125,60 +87,88 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
 }
 ```
 
+## Tools
+
+### Market Data
+- `get_quote`
+- `search_symbol`
+- `get_market_gainers`
+- `get_market_losers`
+- `get_most_active`
+- `get_sector_performance`
+- `get_sp500_constituents`
+
+### Financial Statements
+- `get_company_profile`
+- `get_income_statement`
+- `get_balance_sheet`
+- `get_cash_flow`
+- `get_stock_news`
+- `get_key_metrics`
+- `get_financial_ratios`
+
+### Analyst Data
+- `get_analyst_estimates`
+- `get_price_target`
+- `get_analyst_ratings`
+- `get_insider_trading`
+- `get_institutional_holders`
+
+### Technical Indicators
+- `get_technical_indicator_rsi`
+- `get_technical_indicator_sma`
+- `get_technical_indicator_ema`
+- `get_historical_chart`
+
+### Calendar Data
+- `get_earnings_calendar`
+- `get_economic_calendar`
+- `get_economic_indicator`
+
+## Resources
+
+- `fmp://company/{symbol}/profile`
+- `fmp://company/{symbol}/quote`
+- `fmp://company/{symbol}/financials/{statement}/{period}`
+- `fmp://market/overview`
+- `fmp://market/sectors/{date}`
+
+## Prompts
+
+- `stock_analysis`
+- `portfolio_evaluation`
+- `earnings_preview`
+
 ## Project Structure
 
-```
+```text
 aigroup-fmp-mcp/
 ├── src/
-│   ├── index.ts          # Entry point
-│   ├── server.ts         # McpServer and transport setup
-│   ├── tools/            # Tool definitions
-│   │   ├── index.ts      # Tool registration
-│   │   ├── market.ts     # Market data tools
-│   │   ├── financials.ts # Financial statement tools
-│   │   ├── analysis.ts   # Analyst data tools
-│   │   ├── technical.ts  # Technical indicator tools
-│   │   └── calendar.ts   # Calendar data tools
-│   ├── resources/        # Resource definitions
-│   │   ├── index.ts      # Resource registration
-│   │   └── company.ts    # Company-related resources
-│   ├── prompts/          # Prompt templates
-│   │   ├── index.ts      # Prompt registration
-│   │   └── analysis.ts   # Analysis prompts
-│   ├── types/            # TypeScript types
-│   │   └── index.ts
+│   ├── index.ts
+│   ├── server.ts
+│   ├── tools/
+│   ├── resources/
+│   ├── prompts/
+│   ├── types/
 │   └── utils/
-│       └── fmp.ts        # FMP API utilities
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
-## API Reference
-
-All tools use FMP's stable API endpoints. See [FMP Documentation](https://site.financialmodelingprep.com/developer/docs/stable) for more details.
-
 ## Development
 
 ```bash
-# Install dependencies
 npm install
-
-# Build
 npm run build
-
-# Watch mode
 npm run dev
 ```
 
-## What's New in v2.0
+## API Reference
 
-- **MCP SDK v1.27.1**: Uses latest `McpServer` class with `registerTool()`, `registerResource()`, and `registerPrompt()` APIs
-- **Zod Schema Validation**: Type-safe parameter validation with Zod
-- **Resources**: Direct data access via resource URIs
-- **Prompts**: Reusable analysis templates
-- **Dual Transport**: Support for both stdio and HTTP transports
-- **Better TypeScript**: Full type definitions for all data structures
+All tools map to FMP endpoints. See the official docs:
+
+- [FMP API Documentation](https://site.financialmodelingprep.com/developer/docs/stable)
 
 ## Acknowledgments
 
@@ -200,6 +190,11 @@ Please note:
 
 - the software is provided **"AS IS"**, without warranty of any kind
 - you must preserve the relevant copyright and permission notice in copies or substantial portions of the software
-- use of the **FMP API** is still subject to Financial Modeling Prep's own service terms, quotas, billing rules, and data usage restrictions
+- use of the **FMP API** remains subject to Financial Modeling Prep's own terms of service, quotas, billing rules, and data usage restrictions
 
 See the full text in [LICENSE](LICENSE).
+
+## Support
+
+- Issues: https://github.com/jackdark425/aigroup-fmp-mcp/issues
+- Repository: https://github.com/jackdark425/aigroup-fmp-mcp
