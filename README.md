@@ -1,5 +1,7 @@
 # Financial Modeling Prep MCP Server v2.0
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 A modern Model Context Protocol (MCP) server for accessing financial data from Financial Modeling Prep (FMP) API. Built with the latest MCP SDK features including tools, resources, and prompts.
 
 ## Features
@@ -178,6 +180,16 @@ npm run dev
 - **Dual Transport**: Support for both stdio and HTTP transports
 - **Better TypeScript**: Full type definitions for all data structures
 
-## License
+## License & Usage
 
-MIT
+This project is released under the **MIT License**.
+
+You may use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, including in commercial contexts, provided that the original copyright notice and license text are retained.
+
+Please note:
+
+- the software is provided **"AS IS"**, without warranty of any kind
+- you must preserve the relevant copyright and permission notice in copies or substantial portions of the software
+- use of the **FMP API** is still subject to Financial Modeling Prep's own service terms, quotas, billing rules, and data usage restrictions
+
+See the full text in [LICENSE](LICENSE).
