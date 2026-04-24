@@ -8,19 +8,20 @@ import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { EarningsCalendar, EconomicCalendar } from '../types/index.js';
 
 // Schemas
+const DateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format');
 const OutputFormatSchema = z.enum(['text', 'file']).optional()
   .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)');
 
 const DateRangeSchema = z.object({
-  from: z.string().optional().describe('Start date in YYYY-MM-DD format (optional)'),
-  to: z.string().optional().describe('End date in YYYY-MM-DD format (optional)'),
+  from: DateSchema.optional().describe('Start date in YYYY-MM-DD format (optional)'),
+  to: DateSchema.optional().describe('End date in YYYY-MM-DD format (optional)'),
   outputFormat: OutputFormatSchema,
 });
 
 const EconomicIndicatorSchema = z.object({
   name: z.string().min(1, "Indicator name cannot be empty").describe('Indicator name (e.g., GDP, unemploymentRate, CPI)'),
-  from: z.string().optional().describe('Start date in YYYY-MM-DD format (optional)'),
-  to: z.string().optional().describe('End date in YYYY-MM-DD format (optional)'),
+  from: DateSchema.optional().describe('Start date in YYYY-MM-DD format (optional)'),
+  to: DateSchema.optional().describe('End date in YYYY-MM-DD format (optional)'),
   outputFormat: OutputFormatSchema,
 });
 
@@ -85,7 +86,7 @@ export function registerCalendarTools(server: McpServer) {
     },
     async (args: z.infer<typeof EconomicIndicatorSchema>) => {
       try {
-        let endpoint = `/economic-indicators?name=${args.name}`;
+        let endpoint = `/economic-indicators?name=${encodeURIComponent(args.name)}`;
         if (args.from) endpoint += `&from=${args.from}`;
         if (args.to) endpoint += `&to=${args.to}`;
         const data = await fetchFMP(endpoint);

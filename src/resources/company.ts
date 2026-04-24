@@ -8,6 +8,10 @@ import { fetchFMP } from '../utils/fmp.js';
 import type { CompanyProfile, StockQuote, IncomeStatement, BalanceSheet, CashFlow } from '../types/index.js';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+function getPathSegments(uri: URL): string[] {
+  return uri.pathname.split('/').filter(Boolean);
+}
+
 /**
  * Register company profile resource
  */
@@ -21,8 +25,8 @@ function registerCompanyProfileResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const parts = uri.pathname.split('/');
-      const symbol = parts[2];
+      const parts = getPathSegments(uri);
+      const symbol = parts[0];
       if (!symbol) {
         throw new Error('Invalid URI: symbol is required');
       }
@@ -51,8 +55,8 @@ function registerCompanyQuoteResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const parts = uri.pathname.split('/');
-      const symbol = parts[2];
+      const parts = getPathSegments(uri);
+      const symbol = parts[0];
       if (!symbol) {
         throw new Error('Invalid URI: symbol is required');
       }
@@ -81,10 +85,10 @@ function registerCompanyFinancialsResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const parts = uri.pathname.split('/');
-      const symbol = parts[2];
-      const statement = parts[4] as 'income' | 'balance' | 'cashflow';
-      const period = parts[5] as 'annual' | 'quarter';
+      const parts = getPathSegments(uri);
+      const symbol = parts[0];
+      const statement = parts[2] as 'income' | 'balance' | 'cashflow';
+      const period = parts[3] as 'annual' | 'quarter';
       
       if (!symbol) {
         throw new Error('Invalid URI: symbol is required');
@@ -174,8 +178,8 @@ function registerSectorPerformanceResource(server: McpServer) {
       mimeType: 'application/json',
     },
     async (uri: URL) => {
-      const parts = uri.pathname.split('/');
-      const date = parts[3];
+      const parts = getPathSegments(uri);
+      const date = parts[1];
       if (!date) {
         throw new Error('Invalid URI: date is required (format: YYYY-MM-DD)');
       }

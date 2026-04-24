@@ -6,7 +6,8 @@
  * A modern MCP server using the latest SDK features:
  * - McpServer class with registerTool/registerResource/registerPrompt APIs
  * - Zod schema validation
- * - Dual transport support (stdio and HTTP)
+ * - Stdio transport for full MCP support
+ * - HTTP health/info mode for operational checks
  * - Comprehensive financial data tools
  * - Resource-based data access
  * - Prompt templates for common analysis tasks

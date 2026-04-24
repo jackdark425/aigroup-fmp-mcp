@@ -8,6 +8,7 @@ import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { TechnicalIndicator, HistoricalPrice } from '../types/index.js';
 
 // Schemas
+const DateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format');
 const TimeframeSchema = z.enum(['1min', '5min', '15min', '30min', '1hour', '4hour', '1day']);
 const IntervalSchema = z.enum(['1min', '5min', '15min', '30min', '1hour', '4hour']);
 const OutputFormatSchema = z.enum(['text', 'file']).optional()
@@ -23,8 +24,8 @@ const TechnicalIndicatorSchema = z.object({
 const HistoricalChartSchema = z.object({
   symbol: z.string().min(1, "Symbol cannot be empty").describe('Stock ticker symbol'),
   interval: IntervalSchema.describe('Time interval'),
-  from: z.string().optional().describe('Start date in YYYY-MM-DD format (optional)'),
-  to: z.string().optional().describe('End date in YYYY-MM-DD format (optional)'),
+  from: DateSchema.optional().describe('Start date in YYYY-MM-DD format (optional)'),
+  to: DateSchema.optional().describe('End date in YYYY-MM-DD format (optional)'),
   outputFormat: OutputFormatSchema,
 });
 

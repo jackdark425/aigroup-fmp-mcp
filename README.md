@@ -23,7 +23,7 @@
 - **25 MCP tools** covering market data, financials, analyst workflows, technical indicators, and calendar data
 - **Resources support** for direct URI-based access patterns
 - **Prompt templates** for stock analysis, portfolio review, and earnings preview
-- **Dual transport support** for stdio and HTTP usage
+- **Full stdio MCP support** with optional HTTP health/info endpoints
 - **Zod validation** for safer input handling
 - **Built on MCP SDK 1.27.1** with modern `McpServer` APIs
 
@@ -55,9 +55,11 @@ npm run start:http
 
 By default, the HTTP server exposes:
 
-- `POST /mcp` — MCP endpoint
+- `POST /mcp` — returns `501` in this build
 - `GET /health` — health check
 - `GET /` — server info
+
+HTTP mode in the current build is intended for health checks and service metadata only. Use stdio mode for MCP tools, resources, and prompts.
 
 ## Configuration
 

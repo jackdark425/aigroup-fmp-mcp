@@ -8,10 +8,7 @@ import { fetchFMP, jsonResponse, errorResponse } from '../utils/fmp.js';
 import type { StockQuote, MarketMover, SectorPerformance } from '../types/index.js';
 
 // Common output format schema
-const OutputFormatSchema = z.object({
-  outputFormat: z.enum(['text', 'file']).optional()
-    .describe('Output format: "text" returns JSON directly, "file" saves to file (recommended for large data)'),
-});
+const DateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be in YYYY-MM-DD format');
 
 // Schemas
 const QuoteSchema = z.object({
@@ -27,7 +24,7 @@ const SearchSchema = z.object({
 });
 
 const SectorPerformanceSchema = z.object({
-  date: z.string().optional().describe('Date in YYYY-MM-DD format (optional, defaults to latest)'),
+  date: DateSchema.optional().describe('Date in YYYY-MM-DD format (optional, defaults to latest)'),
   outputFormat: z.enum(['text', 'file']).optional()
     .describe('Output format: "text" returns JSON directly, "file" saves to file'),
 });

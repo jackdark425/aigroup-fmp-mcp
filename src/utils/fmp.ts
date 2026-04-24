@@ -5,26 +5,38 @@
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { randomUUID } from 'crypto';
 
 const FMP_BASE_URL = 'https://financialmodelingprep.com/stable';
+const DEFAULT_REQUEST_TIMEOUT_MS = 30000;
 
 /**
  * Default output directory for JSON files
  */
 const DEFAULT_OUTPUT_DIR = process.env.FMP_OUTPUT_DIR || path.join(os.tmpdir(), 'fmp-mcp-output');
 
-// Ensure output directory exists
-if (!fs.existsSync(DEFAULT_OUTPUT_DIR)) {
-  fs.mkdirSync(DEFAULT_OUTPUT_DIR, { recursive: true });
-}
-
 /**
  * Generate a unique filename for output
  */
 function generateOutputFilename(prefix: string): string {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const random = Math.random().toString(36).substring(2, 8);
-  return `${prefix}_${timestamp}_${random}.json`;
+  return `${prefix}_${timestamp}_${randomUUID().slice(0, 8)}.json`;
+}
+
+function ensureOutputDir(): void {
+  if (!fs.existsSync(DEFAULT_OUTPUT_DIR)) {
+    fs.mkdirSync(DEFAULT_OUTPUT_DIR, { recursive: true });
+  }
+}
+
+function getRequestTimeoutMs(): number {
+  const raw = process.env.FMP_REQUEST_TIMEOUT_MS;
+  if (!raw) {
+    return DEFAULT_REQUEST_TIMEOUT_MS;
+  }
+
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_REQUEST_TIMEOUT_MS;
 }
 
 /**
@@ -46,11 +58,27 @@ export async function fetchFMP<T = unknown>(endpoint: string): Promise<T> {
   // Ensure endpoint doesn't end with '&' before adding apikey
   const cleanEndpoint = endpoint.endsWith('&') ? endpoint.slice(0, -1) : endpoint;
   const url = `${FMP_BASE_URL}${cleanEndpoint}${cleanEndpoint.includes('?') ? '&' : '?'}apikey=${apiKey}`;
-  
-  const response = await fetch(url);
+
+  const timeoutMs = getRequestTimeoutMs();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  let response: Response;
+
+  try {
+    response = await fetch(url, { signal: controller.signal });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`FMP API request timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
   
   if (!response.ok) {
-    throw new Error(`FMP API error: ${response.status} ${response.statusText}`);
+    const errorBody = await response.text();
+    const message = errorBody.trim() || response.statusText;
+    throw new Error(`FMP API error: ${response.status} ${message}`);
   }
   
   return response.json() as Promise<T>;
@@ -73,6 +101,7 @@ export function jsonResponse(
   
   if (shouldUseFile) {
     // Save to file
+    ensureOutputDir();
     const filename = generateOutputFilename(filenamePrefix);
     const filepath = path.join(DEFAULT_OUTPUT_DIR, filename);
     fs.writeFileSync(filepath, jsonString, 'utf-8');

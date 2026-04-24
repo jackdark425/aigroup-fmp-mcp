@@ -2,7 +2,7 @@
   "name": "aigroup-fmp-mcp",
   "version": "2.0.3",
   "mcpName": "io.github.aigroup/fmp-mcp",
-  "description": "Financial Modeling Prep MCP server with tools, resources, prompts, and HTTP transport support for market data workflows.",
+  "description": "Financial Modeling Prep MCP server with tools, resources, prompts, and optional HTTP health/info endpoints for market data workflows.",
   "type": "module",
   "author": {
     "name": "AI Group",

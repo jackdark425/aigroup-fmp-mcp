@@ -10,13 +10,12 @@ import { registerAllTools } from './tools/index.js';
 import { registerAllResources } from './resources/index.js';
 import { registerAllPrompts } from './prompts/index.js';
 import http from 'http';
-import { Readable } from 'stream';
 
 /**
  * Server metadata
  */
 const SERVER_NAME = 'aigroup-fmp-mcp';
-const SERVER_VERSION = '2.0.2';
+const SERVER_VERSION = '2.0.3';
 
 /**
  * Create and configure the MCP server
@@ -51,41 +50,6 @@ export async function startStdioServer(): Promise<void> {
 }
 
 /**
- * Convert IncomingMessage to Web API Request
- */
-async function toWebRequest(req: http.IncomingMessage): Promise<Request> {
-  const url = `http://${req.headers.host}${req.url}`;
-  const method = req.method || 'GET';
-  
-  // Collect body if present
-  let body: string | undefined;
-  if (method === 'POST') {
-    const chunks: Buffer[] = [];
-    for await (const chunk of req) {
-      chunks.push(chunk);
-    }
-    body = Buffer.concat(chunks).toString();
-  }
-  
-  const headers = new Headers();
-  Object.entries(req.headers).forEach(([key, value]) => {
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        value.forEach(v => headers.append(key, v));
-      } else {
-        headers.set(key, value);
-      }
-    }
-  });
-  
-  return new Request(url, {
-    method,
-    headers,
-    body: body ? body : undefined,
-  });
-}
-
-/**
  * Start the server with HTTP transport (using simple JSON-RPC over HTTP)
  */
 export async function startHttpServer(port: number = 3000): Promise<void> {
@@ -117,18 +81,18 @@ export async function startHttpServer(port: number = 3000): Promise<void> {
       return;
     }
     
-    // MCP endpoint - For now, return info about stdio mode
+    // MCP endpoint - HTTP MCP transport is not implemented in this build.
     if (req.url === '/mcp' && req.method === 'POST') {
       let body = '';
       req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
       req.on('end', () => {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(501, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           jsonrpc: '2.0',
           id: null,
           error: {
             code: -32600,
-            message: 'HTTP transport not fully implemented. Please use stdio mode.',
+            message: 'HTTP MCP transport is not implemented in this build. Please use stdio mode.',
           },
         }));
       });
@@ -142,12 +106,21 @@ export async function startHttpServer(port: number = 3000): Promise<void> {
       version: SERVER_VERSION,
       description: 'FMP MCP Server - Financial Modeling Prep integration',
       mode: 'http',
-      note: 'Full HTTP transport is work in progress. Please use stdio mode for full functionality.',
+      note: 'HTTP mode currently provides health/info endpoints only. Use stdio mode for MCP tools, resources, and prompts.',
       endpoints: {
         health: { method: 'GET', path: '/health' },
         mcp: { method: 'POST', path: '/mcp' },
       },
     }));
+  });
+
+  httpServer.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Port ${port} is already in use`);
+    } else {
+      console.error('HTTP server failed to start:', error);
+    }
+    process.exit(1);
   });
   
   httpServer.listen(port, () => {
